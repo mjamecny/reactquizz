@@ -4,6 +4,7 @@ import Header from "./Header"
 import Loader from "./Loader"
 import Error from "./Error"
 import StartScreen from "./StartScreen"
+import Question from "./Question"
 
 const initialState = {
   questions: [],
@@ -24,13 +25,20 @@ function reducer(state, action) {
         ...state,
         status: "error",
       }
+    case "start":
+      return { ...state, status: "active" }
     default:
       throw new Error("Unknown action")
   }
 }
 
 export default function App() {
-  const [{ questions, status }, dispatch] = useReducer(reducer, initialState)
+  const [{ questions, status, index }, dispatch] = useReducer(
+    reducer,
+    initialState
+  )
+
+  console.log(index)
 
   const numQuestions = questions.length
 
@@ -47,7 +55,10 @@ export default function App() {
       <Content>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
-        {status === "ready" && <StartScreen numQuestions={numQuestions} />}
+        {status === "ready" && (
+          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+        )}
+        {status === "active" && <Question question={questions[index]} />}
       </Content>
     </div>
   )
